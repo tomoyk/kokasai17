@@ -1,15 +1,25 @@
-boolean status = false;
+import processing.sound.*;
+
+boolean status = false; // Now status
+boolean before = true; // Before status
 PImage closeImg, openImg;
+SoundFile hi, bye;
 
 void setup(){
   size(1300, 700);
   noStroke();
+  setBack();
   closeImg = loadImage("door_close.png");
   openImg = loadImage("door_open.png");
+  hi = new SoundFile(this, "/Users/tkoyama/Works/kokasai17/proc_testVisualizer/door_hello.wav");
+  bye = new SoundFile(this, "/Users/tkoyama/Works/kokasai17/proc_testVisualizer/door_close.wav");
+}
+
+void setBack(){
+  background(#cccccc);
 }
 
 void draw(){
-  background(#cccccc);
   
   if(mousePressed){
     status = true;
@@ -17,9 +27,15 @@ void draw(){
     status = false;
   }
   
-  if(status){ // open
-    image(openImg, 0, 0, 200, 200);
-  }else{ // close
-    image(closeImg, 0, 0, 200, 200);
+  if(status && !before){ // open
+    before=true;
+    setBack();
+    image(openImg, 200, 0);
+    hi.play();
+  }else if(!status && before){ // close
+    before=false;
+    setBack();
+    image(closeImg, 200, 0);
+    bye.play();
   }
 }

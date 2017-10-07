@@ -1,3 +1,8 @@
+/* [Memo]
+- https://processing.org/reference/libraries/sound/SoundFile.html
+- https://drive.google.com/file/d/0BzyVHU69QO3mdkp0NFF4NlV4TEk/view
+*/
+
 import processing.sound.*;
 
 boolean status = false; // Now status

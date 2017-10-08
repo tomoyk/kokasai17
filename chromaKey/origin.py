@@ -6,8 +6,14 @@ import cv2
 # Windows size Swttings
 winSize = ( 1300, 700 )
 
+# Sets color-range of mask
+# [memo] (Blue, Green, Red)
+#
+lower = np.array([50/2, 80, 80]) # Min
+upper = np.array([250/2, 255, 255]) # Max (Blue)
+
 # Camera Settings
-videoStr = cv2.VideoCapture(1)
+videoStr = cv2.VideoCapture(0)
 
 # Background Settings
 backVdo = cv2.VideoCapture('videos/campus.mp4')
@@ -21,18 +27,24 @@ while(True):
     front = cv2.resize(front, winSize)
     back = cv2.resize(back, winSize)
 
-    ###################
-    hsv = cv2.cvtColor(front, cv2.COLOR_BGR2HSV)
-    lower = np.array([60/2, 50, 80])
-    upper = np.array([250/2, 255, 255])
-    mask = cv2.inRange(hsv, lower, upper)
-    inv_mask = cv2.bitwise_not(mask)
-    res1 = cv2.bitwise_and(front,front,mask= inv_mask)
-    res2 = cv2.bitwise_and(back,back,mask=  mask)
-    disp = cv2.bitwise_or(res1,res2,mask)
+    # Convert BGR to HSR
+    hsvFront = cv2.cvtColor(front, cv2.COLOR_BGR2HSV)
+
+    # Make mask by 'hsvFront'
+    maskFront = cv2.inRange(hsvFront, lower, upper)
+
+    # Apply Gaussian-blur
+    gMaskFront = cv2.GaussianBlur(maskFront, (5, 5), 0)
+
+    # Revrse Mask area
+    rgMaskFront = cv2.bitwise_not(gMaskFront)
+
+    # Attach mask
+    streamFront = cv2.bitwise_and(front, front, mask=rgMaskFront)
+    streamBack = cv2.bitwise_and(back, back, mask=maskFront)
 
     # Catinate each mask
-    # view = cv2.merge(BGR + [255 * maskB * maskG * maskR])
+    disp = cv2.bitwise_or(streamFront, streamBack, maskFront)
 
     # Display windows
     cv2.imshow('DEMO:disp',disp)

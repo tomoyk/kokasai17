@@ -7,7 +7,7 @@ import cv2
 winSize = ( 1300, 700 )
 
 # Camera Settings
-videoStr = cv2.VideoCapture(0)
+videoStr = cv2.VideoCapture(1)
 
 # Background Settings
 backVdo = cv2.VideoCapture('videos/campus.mp4')
@@ -21,31 +21,23 @@ while(True):
     front = cv2.resize(front, winSize)
     back = cv2.resize(back, winSize)
 
-    # Split front-movie colors to RGB
-    BGR = cv2.split(front)
-
-    # Thresh Settings
-    #
-    # [memo]
-    # cv2.THRESH_BINARY      cv2.THRESH_OTSU        cv2.THRESH_TRIANGLE
-    # cv2.THRESH_BINARY_INV  cv2.THRESH_TOZERO      cv2.THRESH_TRUNC
-    # cv2.THRESH_MASK        cv2.THRESH_TOZERO_INV
-    # 
-    threshB = [cv2.THRESH_BINARY, 120]
-    threshR = [cv2.THRESH_BINARY_INV, 60]
-    threshG = [cv2.THRESH_BINARY, 60]
-
-    # Set channnel-color
-    _, maskB = cv2.threshold(BGR[0], threshB[1], 1, threshB[0])
-    _, maskR = cv2.threshold(BGR[1], threshR[1], 1, threshR[0])
-    _, maskG = cv2.threshold(BGR[2], threshG[1], 1, threshG[0])
+    ###################
+    hsv = cv2.cvtColor(front, cv2.COLOR_BGR2HSV)
+    lower = np.array([60/2, 50, 80])
+    upper = np.array([250/2, 255, 255])
+    mask = cv2.inRange(hsv, lower, upper)
+    inv_mask = cv2.bitwise_not(mask)
+    res1 = cv2.bitwise_and(front,front,mask= inv_mask)
+    res2 = cv2.bitwise_and(back,back,mask=  mask)
+    disp = cv2.bitwise_or(res1,res2,mask)
 
     # Catinate each mask
-    view = cv2.merge(BGR + [255 * maskB * maskG * maskR])
+    # view = cv2.merge(BGR + [255 * maskB * maskG * maskR])
 
     # Display windows
-    cv2.imshow('DEMO:view',view)
-    cv2.imshow('DEMO:back', back)
+    cv2.imshow('DEMO:disp',disp)
+    # cv2.imshow('DEMO:front',front)
+    # cv2.imshow('DEMO:back',back)
 
     # Delay 10ms and Check keydown 'q' for exit
     if cv2.waitKey(1) & 0xFF == ord('q'):

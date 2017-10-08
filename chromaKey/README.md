@@ -8,7 +8,9 @@
 
 合成する映像はWebカメラから取得した映像を利用。
 
-[img]
+## イメージ
+
+<img src="https://pbs.twimg.com/media/DLlmyHjUIAAnZ7c.jpg:large" width="500">
 
 ## 参考サイト
 

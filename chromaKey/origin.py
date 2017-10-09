@@ -9,11 +9,11 @@ winSize = ( 1300, 700 )
 # Sets color-range of mask
 # [memo] (Blue, Green, Red)
 #
-lower = np.array([50/2, 80, 80]) # Min
-upper = np.array([250/2, 255, 255]) # Max (Blue)
+lower = np.array([60/2, 50, 80])     # Min
+upper = np.array([250/2, 255, 255])  # Max
 
 # Camera Settings
-videoStr = cv2.VideoCapture(0)
+videoStr = cv2.VideoCapture(1)
 
 # Background Settings
 backVdo = cv2.VideoCapture('videos/campus.mp4')
@@ -34,10 +34,11 @@ while(True):
     maskFront = cv2.inRange(hsvFront, lower, upper)
 
     # Apply Gaussian-blur
-    gMaskFront = cv2.GaussianBlur(maskFront, (5, 5), 0)
+    # gMaskFront = cv2.GaussianBlur(maskFront, (5, 5), 0)
 
     # Revrse Mask area
-    rgMaskFront = cv2.bitwise_not(gMaskFront)
+    # rgMaskFront = cv2.bitwise_not(gMaskFront)
+    rgMaskFront = cv2.bitwise_not(maskFront)
 
     # Attach mask
     streamFront = cv2.bitwise_and(front, front, mask=rgMaskFront)

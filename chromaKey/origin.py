@@ -2,13 +2,25 @@
 
 import numpy as np
 import cv2
+import sys
+
+argv = sys.argv
+
+try:
+    if argv[1] == "1": 
+        param = "cloud.mp4"
+    elif argv[1] == "2":
+        param = "coastline.mp4"
+    elif argv[1] == "3":
+        param = "campus.mp4"
+except IndexError:
+    param = "campus.mp4"
 
 # Windows size Swttings
 winSize = ( 1300, 700 )
 
 # Sets color-range of mask
 # [memo] (Blue, Green, Red)
-#
 lower = np.array([60/2, 50, 80])     # Min
 upper = np.array([250/2, 255, 255])  # Max
 
@@ -16,7 +28,7 @@ upper = np.array([250/2, 255, 255])  # Max
 videoStr = cv2.VideoCapture(1)
 
 # Background Settings
-backVdo = cv2.VideoCapture('videos/campus.mp4')
+backVdo = cv2.VideoCapture('videos/' + param)
 
 while(True):
     # Get each frame

@@ -18,7 +18,7 @@ void settings(){
 void setup(){
   /* Serial */
   frameRate(60);
-  String arduinoPort = Serial.list()[1];
+  String arduinoPort = Serial.list()[0];
   port = new Serial(this, arduinoPort,9600);
   
   /* Image and Sounds */
@@ -48,13 +48,13 @@ void draw(){
     if(status && !before){ // open
       before=true;
       setBack();
-      image(openImg, 200, 0);
-      hi.play();
+      image(closeImg, 200, 0);
+      bye.play();      
     }else if(!status && before){ // close
       before=false;
       setBack();
-      image(closeImg, 200, 0);
-      bye.play();
+      image(openImg, 200, 0);
+      hi.play();
     }
     
   }

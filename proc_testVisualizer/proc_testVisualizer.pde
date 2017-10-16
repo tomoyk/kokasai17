@@ -1,23 +1,33 @@
-/* [Memo]
-- https://processing.org/reference/libraries/sound/SoundFile.html
-- https://drive.google.com/file/d/0BzyVHU69QO3mdkp0NFF4NlV4TEk/view
-*/
-
 import processing.sound.*;
+import processing.serial.*;
 
+/* Viewer */
 boolean status = false; // Now status
 boolean before = true; // Before status
 PImage closeImg, openImg;
 SoundFile hi, bye;
 
-void setup(){
+/* Srial */
+Serial port;
+float val;
+
+void settings(){
   size(1300, 700);
+}
+
+void setup(){
+  /* Serial */
+  frameRate(60);
+  String arduinoPort = Serial.list()[1];
+  port = new Serial(this, arduinoPort,9600);
+  
+  /* Image and Sounds */
   noStroke();
   setBack();
-  closeImg = loadImage("door_close.png");
-  openImg = loadImage("door_open.png");
-  hi = new SoundFile(this, "/Users/tkoyama/Works/kokasai17/proc_testVisualizer/door_hello.wav");
-  bye = new SoundFile(this, "/Users/tkoyama/Works/kokasai17/proc_testVisualizer/door_close.wav");
+  closeImg = loadImage("/home/tkoyama/kokasai17/proc_testVisualizer/door_close.png");
+  openImg = loadImage("/home/tkoyama/kokasai17/proc_testVisualizer/door_open.png");
+  hi = new SoundFile(this, "/home/tkoyama/kokasai17/proc_testVisualizer/door_hello.wav");
+  bye = new SoundFile(this, "/home/tkoyama/kokasai17/proc_testVisualizer/door_close.wav");
 }
 
 void setBack(){
@@ -25,22 +35,30 @@ void setBack(){
 }
 
 void draw(){
-  
-  if(mousePressed){
-    status = true;
-  }else{
-    status = false;
+  if(port.available() > 0){
+    val = port.read();
+    println("test: "+val);
+    
+    if( val == 1.0 ){
+      status = true;
+    }else{
+      status = false;
+    }
+    
+    if(status && !before){ // open
+      before=true;
+      setBack();
+      image(openImg, 200, 0);
+      hi.play();
+    }else if(!status && before){ // close
+      before=false;
+      setBack();
+      image(closeImg, 200, 0);
+      bye.play();
+    }
+    
   }
   
-  if(status && !before){ // open
-    before=true;
-    setBack();
-    image(openImg, 200, 0);
-    hi.play();
-  }else if(!status && before){ // close
-    before=false;
-    setBack();
-    image(closeImg, 200, 0);
-    bye.play();
-  }
+  stroke(120);
+  fill(255);
 }
